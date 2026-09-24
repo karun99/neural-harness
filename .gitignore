@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+harness_reports/
+harness_history.jsonl
+*.validation.json
+*.validation.md
+.venv/
