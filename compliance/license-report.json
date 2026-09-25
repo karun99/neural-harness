@@ -1,0 +1,8 @@
+{
+  "project": "neural-harness",
+  "tool": "licensecheck/equivalent-self-report",
+  "declared_license": "MIT",
+  "license_file": "/root/neural-harness/LICENSE",
+  "third_party_production_dependencies": [],
+  "note": "No third-party runtime dependencies present (Python standard library only); no copyleft exposure by construction."
+}

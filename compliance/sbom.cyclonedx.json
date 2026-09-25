@@ -1,0 +1,39 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.5",
+  "serialNumber": "urn:uuid:d9742b08-1116-4a4e-92a0-4e509e645fbd",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-09-25T00:00:00Z",
+    "component": {
+      "type": "library",
+      "bom-ref": "pkg:pypi/neural-harness@1.0.0",
+      "name": "neural-harness",
+      "version": "1.0.0",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ]
+    },
+    "properties": [
+      {
+        "name": "dependencies",
+        "value": "none (Python 3 standard library only)"
+      },
+      {
+        "name": "acquisition-method",
+        "value": "source"
+      }
+    ]
+  },
+  "components": [],
+  "dependencies": [
+    {
+      "ref": "pkg:pypi/neural-harness@1.0.0",
+      "dependsOn": []
+    }
+  ]
+}
