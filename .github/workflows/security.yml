@@ -19,7 +19,7 @@ jobs:
     name: Gitleaks - Secret Detection (A4)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Run gitleaks
@@ -31,7 +31,7 @@ jobs:
     name: SocChecks - SBOM / CVE / License / Pinning (A1-A3, A5)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
