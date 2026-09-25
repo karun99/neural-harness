@@ -17,8 +17,9 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - run: pip install -e .
-      - run: python -m pytest -q
       - run: pip install -e ".[dev]"
+      - name: Run tests with coverage
+        run: python -m pytest -q --cov=neural_harness --cov-report=term-missing
       - name: Run harness site check (demo + adapters)
         run: |
           python -m neural_harness validate demo --out harness_reports

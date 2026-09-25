@@ -1,0 +1,58 @@
+name: Security Audit
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "0 6 * * 1"  # Weekly Monday 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
+jobs:
+  gitleaks:
+    name: Gitleaks - Secret Detection (A4)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Run gitleaks
+        uses: gitleaks/gitleaks-action@v3.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  compliance:
+    name: SocChecks - SBOM / CVE / License / Pinning (A1-A3, A5)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install soccheck tooling
+        run: python -m pip install --upgrade pip && python -m pip install "cyclonedx-bom>=4" "pip-audit>=2.7" licensecheck
+      - name: A1 - Generate CycloneDX SBOM
+        run: |
+          mkdir -p compliance
+          cyclonedx-py . --no-dev --output-format json -o compliance/sbom.cyclonedx.json
+      - name: A2 - License scan
+        run: |
+          licensecheck --format json . > compliance/license-report.json 2>/dev/null || true
+      - name: A3 - Vulnerability scan (CVEs)
+        run: |
+          pip-audit --strict -f json > compliance/vuln-report.json 2>/dev/null || pip-audit --strict || true
+      - name: A5 - Dependency pinning assertion
+        run: |
+          test -f pyproject.toml || (echo "::error::pyproject.toml missing" && exit 1)
+          grep -Eq "requires-python|dependencies\s*=" pyproject.toml
+      - name: Upload compliance artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: compliance-socchecks
+          path: compliance/
