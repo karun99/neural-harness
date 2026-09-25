@@ -47,32 +47,39 @@ def make_harness(project: str, version: str = "") -> Harness:
     return h
 
 
-def run_project(project: str, root_dir: str) -> Tuple[Harness, List[CheckResult], list]:
-    """Run the shared harness against `project`. Returns (harness, results, fused)."""
-    adapters = {
-        "demo": _demo_context,
-        "celebrum": _celebrum_context,
-        "samvit": _samvit_context,
-        "collabuild": _collabuild_context,
-    }
-    if project not in adapters:
-        raise KeyError(f"unknown project {project!r}; known: {ALL}")
+def get_context(project: str, root_dir: str) -> dict:
+    """Return the raw context a project adapter would feed the harness.
 
-    h = make_harness(project)
-    ctx = adapters[project](root_dir)
+    Exposed so the TRL layer can re-run the harness on perturbed or degenerate
+    copies of the same context (harness-exploitability and decision-flip
+    measurements) without duplicating adapter logic.
+    """
+    if project not in _ADAPTERS:
+        raise KeyError(f"unknown project {project!r}; known: {ALL}")
+    ctx = _ADAPTERS[project](root_dir)
     ctx.setdefault("project", project)
-    results = []
+    return ctx
+
+
+def run_with_context(project: str, ctx: dict) -> Tuple[Harness, List[CheckResult], list]:
+    """Run the full harness (including fused integration) on a prepared context."""
+    h = make_harness(project)
+    results: List[CheckResult] = []
     for suite in h.suites:
         block = suite.run(**ctx)
         for r in block:
             r.phase = suite.phase
         results.extend(block)
-
     fused = fused_report(h, results)
     for f in fused:
         f.phase = Phase.DATA_INTEGRATION
     h.last_results = list(results) + fused
     return h, results, fused
+
+
+def run_project(project: str, root_dir: str) -> Tuple[Harness, List[CheckResult], list]:
+    """Run the shared harness against `project`. Returns (harness, results, fused)."""
+    return run_with_context(project, get_context(project, root_dir))
 
 
 # --------------------------------------------------------------------------
@@ -266,3 +273,13 @@ def _collabuild_context(root_dir: str) -> dict:
         "anchors": [(sources[i], sources[i + 1]) for i in range(0, len(sources) - 1, 2)],
         "synthesizable": synthesized[:6],
     }
+
+
+# Adapters are registered after the contexts above so every name resolves
+# regardless of definition order within this module.
+_ADAPTERS = {
+    "demo": _demo_context,
+    "celebrum": _celebrum_context,
+    "samvit": _samvit_context,
+    "collabuild": _collabuild_context,
+}
