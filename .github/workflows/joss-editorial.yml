@@ -1,0 +1,48 @@
+name: JOSS editorial bot
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Operation: check | submit'
+        required: true
+        default: 'check'
+      dry_run:
+        description: 'Dry run (print the submission preview, do not post)'
+        required: true
+        default: 'true'
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  editorial-bot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch editorial bot engine
+        run: git clone --quiet --depth 1 https://github.com/karun99/neural-harness.git /opt/neural-harness
+
+      - name: Run JOSS editorial bot
+        env:
+          GH_TOKEN: ${{ secrets.JOSS_BOT_TOKEN || github.token }}
+        run: |
+          set -euo pipefail
+          MODE="${{ github.event.inputs.mode }}"
+          DRY="${{ github.event.inputs.dry_run }}"
+          ARGS=(--repo "${{ github.repository }}" --source "$GITHUB_WORKSPACE")
+          if [ "$DRY" = "true" ]; then
+            ARGS+=(--dry-run)
+          fi
+          python3 /opt/neural-harness/scripts/joss_editorial_bot.py "$MODE" "${ARGS[@]}" \
+            --markdown-out "$GITHUB_WORKSPACE/harness_reports/joss-readiness.md" \
+            --json-out "$GITHUB_WORKSPACE/harness_reports/joss-readiness.json"
+
+      - name: Upload readiness report
+        uses: actions/upload-artifact@v4
+        with:
+          name: joss-readiness
+          path: harness_reports/joss-readiness.*
