@@ -1,0 +1,15 @@
+{
+  "$schema": "https://raw.githubusercontent.com/modelcontextprotocol/mcp-spec/main/schemas/client.json",
+  "name": "neural-harness",
+  "description": "shared validation engine measuring information-handling and neural-synthesis accuracy",
+  "mcpServers": {
+    "glama-gateway": {
+      "command": "glama-mcp",
+      "args": [],
+      "env": {
+        "GLAMA_API_KEY": "${GLAMA_API_KEY}",
+        "GLAMA_DEFAULT_MODEL": "openai/gpt-4o"
+      }
+    }
+  }
+}
