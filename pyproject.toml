@@ -13,6 +13,7 @@ authors = [{name = "Karun Karun", email = "karun@karun.online"}]
 keywords = [
     "validation", "harness", "neural", "evaluation",
     "data-integration", "llm", "quality", "human-voice",
+    "mcp", "model-context-protocol", "ai-agent-tools", "glama",
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -30,6 +31,7 @@ dev = ["pytest>=7", "pytest-cov>=4.1"]
 
 [project.scripts]
 nh = "neural_harness.cli:main"
+nh-mcp = "neural_harness.mcp_server:serve_stdio_entry"
 
 [project.urls]
 Homepage = "https://github.com/karun99/neural-harness"

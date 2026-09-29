@@ -3,6 +3,9 @@
   "name": "neural-harness",
   "description": "shared validation engine measuring information-handling and neural-synthesis accuracy",
   "mcpServers": {
+    "neural-harness-mcp": {
+      "command": "nh-mcp"
+    },
     "glama-gateway": {
       "command": "glama-mcp",
       "args": [],
