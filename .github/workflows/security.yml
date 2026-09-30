@@ -40,7 +40,7 @@ jobs:
       - name: A1 - Generate CycloneDX SBOM
         run: |
           mkdir -p compliance
-          cyclonedx-py environment --no-dev --output-format json -o compliance/sbom.cyclonedx.json
+          cyclonedx-py environment --output-format json -o compliance/sbom.cyclonedx.json
       - name: A2 - License scan
         run: |
           licensecheck --format json . > compliance/license-report.json 2>/dev/null || true
