@@ -52,7 +52,7 @@ jobs:
           test -f pyproject.toml || (echo "::error::pyproject.toml missing" && exit 1)
           grep -Eq "requires-python|dependencies\s*=" pyproject.toml
       - name: Upload compliance artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: compliance-socchecks
           path: compliance/
