@@ -42,7 +42,7 @@ jobs:
             --json-out "$GITHUB_WORKSPACE/harness_reports/joss-readiness.json"
 
       - name: Upload readiness report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: joss-readiness
           path: harness_reports/joss-readiness.*
